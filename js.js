@@ -72,3 +72,68 @@ function findData(e) {
 }
 
 findBtn.addEventListener('click', findData);
+
+function updateData(e) {
+    e.preventDefault();
+
+    if (enterId.value.length < 3) {
+        alert('Product code cant be blank! MIN 3 Symbols')
+        return
+    }
+
+    if (enterName.value === "") {
+        alert('Product Name cant be blank!')
+        return
+    }
+
+    if (enterQuantity.value.length < 1) {
+        alert('Product Quantity cant be blank! MIN 1 Symbol')
+        return
+    }
+
+    console.log(`update function ${enterId.value} ${enterName.value} ${enterQuantity.value}`);
+    update(ref(database, "Products/" + enterId.value), {
+        Name: enterName.value,
+        Quantity: enterQuantity.value
+    })
+
+    .then(() => {
+        alert("Data update successfully");
+    })
+    .catch((error) => {
+        alert(error);
+    })
+
+}
+
+updateBtn.addEventListener('click', updateData);
+
+function removeData(e) {
+    e.preventDefault()
+
+    if (enterId.value.length < 3) {
+        alert('Product code cant be blank! MIN 3 Symbols')
+        return
+    }
+
+    const dbRef = ref(database);
+
+    get(child(dbRef, `Products/${enterId.value}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log(snapshot.val());
+            remove(ref(database, "Products/" + enterId.value))
+            .then(() => {
+                alert("Data deleted successfully");
+            })
+            .catch((error) => {
+                alert(error);
+            })
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+removeBtn.addEventListener('click', removeData);
